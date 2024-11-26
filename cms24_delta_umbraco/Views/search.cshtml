@@ -1,0 +1,7 @@
+﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@inherits UmbracoViewPage<Search>
+@{
+	Layout = "main.cshtml";
+}
+
+<h1>@Html.Raw(@Model.SearchQuery)</h1>

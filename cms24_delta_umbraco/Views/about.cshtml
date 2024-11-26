@@ -1,0 +1,29 @@
+﻿@{
+	Layout = "main.cshtml";
+}
+@inject Umbraco.Forms.Core.Services.IRecordReaderService _readerService;
+@inject Microsoft.Extensions.Logging.ILogger<object> _logger
+@{
+    
+    var guid = new Guid("d6c1cc68-6ee0-42a9-8832-687bfb4f83d4");
+    var result = _readerService.GetRecordsFromForm(guid, 1, 1);
+    foreach(var item in result.Items)
+    {
+        
+        _logger.LogInformation("test");
+        <h2>@item.RecordData</h2>
+    }
+
+	Layout = "main.cshtml";
+	<div>
+    @if (Model.Content.ContactForm != null)
+    {
+        @await Component.InvokeAsync("RenderForm", new
+            {
+                formId = Model.Content.ContactForm,
+                theme = "",
+                includeScripts = false
+            })
+    }
+</div>
+}
