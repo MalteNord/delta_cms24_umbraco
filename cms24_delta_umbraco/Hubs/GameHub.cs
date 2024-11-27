@@ -157,4 +157,10 @@ public async Task EndGame(string roomId)
     }
 }
 
+public Task KeepAlive()
+{
+    _logger.LogDebug("Keep-alive ping received from client");
+    return Task.CompletedTask;
+}
+
 }
