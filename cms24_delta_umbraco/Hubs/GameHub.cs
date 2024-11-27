@@ -7,6 +7,7 @@ public class GameHub : Hub
 {
 	private readonly IGameService _gameService;
 	private readonly ILogger<GameHub> _logger;
+	private string? _lastTrackId;
 
 	public GameHub(IGameService gameService, ILogger<GameHub> logger)
 	{
@@ -105,10 +106,14 @@ public class GameHub : Hub
 	{
 		try
 		{
-			_logger.LogInformation($"Sending track change notification to room {roomId} for track {trackId}");
-			// Use exactly the same method name for SendAsync as we'll use on the client
-			await Clients.Group(roomId).SendAsync("OnTrackChanged", trackId);
-			_logger.LogInformation($"Track change notification sent successfully to room {roomId}");
+			// Only send notification if track has actually changed
+			if (_lastTrackId != trackId)
+			{
+				_logger.LogInformation($"Sending track change notification to room {roomId} for track {trackId}");
+				await Clients.Group(roomId).SendAsync("OnTrackChanged", trackId);
+				_logger.LogInformation($"Track change notification sent successfully to room {roomId}");
+				_lastTrackId = trackId;
+			}
 		}
 		catch (Exception ex)
 		{
