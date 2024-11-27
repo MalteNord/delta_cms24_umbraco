@@ -77,4 +77,4 @@ jobs:
         with:
           app-name: 'quizify' # Your Azure App Service name
           slot-name: 'Production' # Change if using deployment slots
-          package: ./publish.zip
+          package: ./publish/publish.zip
