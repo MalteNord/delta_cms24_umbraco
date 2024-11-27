@@ -16,7 +16,7 @@ builder.Services.AddCors(options =>
             "https://quizify-543tuvkpd-maltes-projects-d53b188c.vercel.app",
             "https://quizify-kappa.vercel.app"
         )
-        .AllowAnyMethod() 
+        .AllowAnyMethod()
         .AllowAnyHeader()
         .AllowCredentials();
     });
@@ -66,7 +66,11 @@ WebApplication app = builder.Build();
 await app.BootUmbracoAsync();
 
 app.UseSession();
-app.UseCors("AllowOrigins");
+
+app.UseRouting(); // UseRouting should come before UseCors
+
+app.UseCors("AllowOrigins"); // Correct position for UseCors
+
 
 app.UseUmbraco()
     .WithMiddleware(u =>
@@ -80,8 +84,11 @@ app.UseUmbraco()
         u.UseWebsiteEndpoints();
     });
 
+// SignalR hubs
 app.MapHub<LobbyHub>("/lobbyHub").RequireCors("AllowOrigins");
 app.MapHub<GameHub>("/gameHub").RequireCors("AllowOrigins");
+
+// Other endpoints
 app.MapControllers();
 
 await app.RunAsync();
