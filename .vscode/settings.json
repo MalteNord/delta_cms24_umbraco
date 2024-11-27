@@ -1,0 +1,4 @@
+{
+  "appService.defaultWebAppToDeploy": "/subscriptions/8179e308-6f76-4a98-a949-1b23b307a8b5/resourceGroups/rg-cms24-delta/providers/Microsoft.Web/sites/quizify",
+  "appService.deploySubpath": "cms24_delta_umbraco"
+}
