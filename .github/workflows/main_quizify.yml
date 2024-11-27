@@ -1,7 +1,6 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
+# .github/workflows/azure-deploy.yml
 
-name: Build and deploy ASP.Net Core app to Azure Web App - quizify
+name: Build and Deploy ASP.NET Core App to Azure Web App - quizify
 
 on:
   push:
@@ -14,24 +13,37 @@ jobs:
     runs-on: windows-latest
 
     steps:
+      # Step 1: Checkout the repository
       - uses: actions/checkout@v4
 
-      - name: Set up .NET Core
+      # Step 2: Setup .NET Core SDK
+      - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.x'
+          dotnet-version: '8.x' # Specify your .NET version
 
-      - name: Build with dotnet
-        run: dotnet build --configuration Release
+      # Step 3: Restore dependencies
+      - name: Restore Dependencies
+        run: dotnet restore ./cms24_delta_umbraco/cms24_delta_umbraco.csproj
 
-      - name: dotnet publish
-        run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
+      # Step 4: Build the project
+      - name: Build Project
+        run: dotnet build ./cms24_delta_umbraco/cms24_delta_umbraco.csproj --configuration Release --no-restore
 
-      - name: Upload artifact for deployment job
+      # Step 5: Publish the project
+      - name: Publish Project
+        run: dotnet publish ./cms24_delta_umbraco/cms24_delta_umbraco.csproj --configuration Release --output ./publish
+
+      # Step 6: Zip the publish folder
+      - name: Zip Publish Folder
+        run: Compress-Archive -Path ./publish/* -DestinationPath ./publish.zip
+
+      # Step 7: Upload the zipped artifact for deployment
+      - name: Upload Artifact for Deployment
         uses: actions/upload-artifact@v4
         with:
-          name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          name: publish-artifact
+          path: ./publish.zip
 
   deploy:
     runs-on: windows-latest
@@ -40,14 +52,17 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
+      id-token: write # Required for requesting the JWT
 
     steps:
-      - name: Download artifact from build job
+      # Step 1: Download the artifact from the build job
+      - name: Download Artifact
         uses: actions/download-artifact@v4
         with:
-          name: .net-app
-      
+          name: publish-artifact
+          path: ./publish
+
+      # Step 2: Login to Azure using service principal
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -55,11 +70,11 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_36863C1413D24FDFA150E2075FE361DC }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_FD501A0F1F6F40209B1F6BF7CC872F35 }}
 
+      # Step 3: Deploy the zipped publish folder to Azure Web App
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'quizify'
-          slot-name: 'Production'
-          package: .
-          
+          app-name: 'quizify' # Your Azure App Service name
+          slot-name: 'Production' # Change if using deployment slots
+          package: ./publish.zip
