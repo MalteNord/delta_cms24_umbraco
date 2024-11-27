@@ -34,7 +34,7 @@ builder.Services.AddSession(options =>
 
 builder.Services.Configure<CookiePolicyOptions>(options =>
 {
-    options.MinimumSameSitePolicy = SameSiteMode.None;
+    options.MinimumSameSitePolicy = SameSiteMode.Lax;
     options.Secure = CookieSecurePolicy.Always;
 });
 
@@ -44,6 +44,7 @@ builder.Services.AddSignalR(options =>
 {
     options.KeepAliveInterval = TimeSpan.FromMinutes(1);
     options.ClientTimeoutInterval = TimeSpan.FromMinutes(5);
+    options.EnableDetailedErrors = true;
 });
 
 builder.Services.AddDbContext<AppDbContext>(options =>
