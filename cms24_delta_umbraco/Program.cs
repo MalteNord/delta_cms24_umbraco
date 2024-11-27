@@ -13,7 +13,7 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(
             "http://localhost:3000",
-            "https://quizify-543tuvkpd-maltes-projects-d53b188c.vercel.app"
+            "https://quizify-543tuvkpd-maltes-projects-d53b188c.vercel.app",
             "https://quizify-kappa.vercel.app"
         )
         .AllowAnyMethod()
