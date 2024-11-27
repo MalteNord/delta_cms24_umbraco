@@ -16,7 +16,7 @@ builder.Services.AddCors(options =>
             "https://quizify-543tuvkpd-maltes-projects-d53b188c.vercel.app",
             "https://quizify-kappa.vercel.app"
         )
-        .AllowAnyMethod()
+        .AllowAnyMethod() 
         .AllowAnyHeader()
         .AllowCredentials();
     });
